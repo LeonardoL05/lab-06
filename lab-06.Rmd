@@ -1,6 +1,6 @@
 ---
 title: "Lab 06 - Functions and iterations"
-author: "INSERT NAME HERE"
+author: "LEONARDO MAFFEI MERCALLI"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -29,8 +29,25 @@ diamonds <- diamonds %>% rename(
 ```{r}
 # Do some preliminary investigations & cleaning
 
+diamonds %>% select(depth_mm, width_mm, length_mm, table_pct, depth_pct) %>% replace_with_na(replace = list(x = 0))
 
-
+ggplot() + 
+  geom_point(data = diamonds,
+             aes(x = depth_mm,
+                 y= depth_pct),
+             color = "red") +
+  geom_point(data = diamonds,
+             aes(x = length_mm,
+                 y= depth_pct),
+             color = "green") +
+  geom_point(data = diamonds,
+             aes(x = width_mm,
+                 y= depth_pct),
+             color = "blue") + 
+  labs(
+    x = "length, width and depth",
+    y = "depth percentage"
+  )
 
 ```
 
@@ -44,21 +61,19 @@ diamonds <- diamonds %>%
 
 # Overall table_mm arithmetic mean?
 
-
-
-
+diamonds %>% summarise(mean(table_mm))
 
 
 # table_mm arithmetic mean within each clarity category
 
-
+diamonds %>% group_by(clarity) %>% summarise(meandia = mean(table_mm, na.rm = T))
 
 
 
 
 ```
 
-_Add your comment here_
+_mean table length goes down as clarity improves_
 
 ## Exercise 3
 
@@ -70,7 +85,11 @@ _Do derivation on paper, unless you know how to write LaTeX code_
 ```{r}
 # Write gmean() command
 
+gmean <- function(x) {
+  exp(mean(log(x)))
+} 
 
+gmean(c(5, 10, 12))
 
 ```
 
@@ -78,17 +97,26 @@ _Do derivation on paper, unless you know how to write LaTeX code_
 
 ```{r, error = TRUE}
 
+gmean <- function(x) {
+  exp(mean(log(x)))
+  if( any(x <= 0) ){
+  warning("<ERROR MESSAGE>")
+  return(NaN)
+}
+} 
+
 test_data <- list(
   test1 = c(2.1, 3.8, 4.2),
   test2 = c(1, 10, 100, 1000),
-  test3 = c(0, 1, 4),
-  test4 = c(0.38,  0.94, -1.56),
-  test5 = c(TRUE, TRUE),
-  test6 = c("6", "7", "8")
+  test3 = c(0, 1, 4)
 )
 
 
 # Create for loop to test gmean() on the above examples
+
+for (x in test_data) {
+  gmean(x)
+}
 
 
 ```
